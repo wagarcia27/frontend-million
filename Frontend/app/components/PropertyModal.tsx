@@ -1,20 +1,47 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Property } from '../types';
+import { useAuth } from '../contexts/AuthContext';
 
 interface PropertyModalProps {
-  property: Property;
+  property: Property | null;
   onClose: () => void;
+  onLoginRequired?: () => void;
 }
 
-export default function PropertyModal({ property, onClose }: PropertyModalProps) {
+export default function PropertyModal({ property, onClose, onLoginRequired }: PropertyModalProps) {
+  // Early return if property is null
+  if (!property) {
+    return null;
+  }
+  const { isAuthenticated, isFavorite, toggleFavorite } = useAuth();
+  const [isFavoriting, setIsFavoriting] = useState(false);
+
   useEffect(() => {
     document.body.style.overflow = 'hidden';
     return () => {
       document.body.style.overflow = 'unset';
     };
   }, []);
+
+  const handleFavoriteClick = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    
+    if (!isAuthenticated) {
+      onLoginRequired?.();
+      return;
+    }
+    
+    try {
+      setIsFavoriting(true);
+      await toggleFavorite(property.idProperty);
+    } catch (error) {
+      console.error('Error toggling favorite:', error);
+    } finally {
+      setIsFavoriting(false);
+    }
+  };
 
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat('en-US', {
@@ -53,6 +80,26 @@ export default function PropertyModal({ property, onClose }: PropertyModalProps)
           >
             <svg className="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+          
+          <button
+            onClick={handleFavoriteClick}
+            disabled={isFavoriting}
+            className={`absolute top-4 left-4 p-2 rounded-full backdrop-blur-sm transition-all duration-200 ${
+              isAuthenticated && isFavorite(property.idProperty)
+                ? 'bg-red-500/90 text-white shadow-lg'
+                : 'bg-white/80 text-gray-600 hover:bg-red-50/90 hover:text-red-500'
+            } ${isFavoriting ? 'opacity-50 cursor-not-allowed' : ''}`}
+          >
+            <svg 
+              className={`w-6 h-6 transition-all duration-200 ${isFavoriting ? 'animate-pulse scale-110' : ''}`}
+              fill={isAuthenticated && isFavorite(property.idProperty) ? 'currentColor' : 'none'} 
+              stroke="currentColor" 
+              strokeWidth={2}
+              viewBox="0 0 24 24"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
             </svg>
           </button>
           <div className="absolute bottom-4 right-4 bg-primary-600 text-white px-6 py-3 rounded-full font-bold text-2xl shadow-xl">

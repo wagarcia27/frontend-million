@@ -38,6 +38,32 @@ public class PropertiesController : ControllerBase
     }
 
     /// <summary>
+    /// Gets properties with pagination
+    /// </summary>
+    [HttpGet("paginated")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<ActionResult<PagedResultDto<PropertyDto>>> GetPropertiesPaginated(
+        [FromQuery] int page = 1, 
+        [FromQuery] int pageSize = 12, 
+        [FromQuery] PropertyFilterDto? filter = null)
+    {
+        try
+        {
+            if (page < 1) page = 1;
+            if (pageSize < 1 || pageSize > 50) pageSize = 12;
+
+            var result = await _propertyService.GetPropertiesPaginatedAsync(page, pageSize, filter);
+            return Ok(result);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error retrieving paginated properties");
+            return StatusCode(500, new { message = "An error occurred while retrieving properties", error = ex.Message });
+        }
+    }
+
+    /// <summary>
     /// Gets a property by ID
     /// </summary>
     [HttpGet("{id}")]

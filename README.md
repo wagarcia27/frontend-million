@@ -30,6 +30,8 @@ The project follows **Clean Architecture** principles with proper separation of 
 ### Backend (API) - Following Technical Requirements
 - ✅ **RESTful API** with complete CRUD operations for properties
 - ✅ **Advanced Filtering** by name, address, and price range (as required)
+- ✅ **Pagination Support** with skip/limit for efficient data handling
+- ✅ **JWT Authentication** with user management and favorites
 - ✅ **Clean Architecture** with proper separation (Models, DTOs, Services, Controllers)
 - ✅ **Robust Error Handling** and structured logging
 - ✅ **Swagger Documentation** for API endpoints
@@ -38,6 +40,7 @@ The project follows **Clean Architecture** principles with proper separation of 
 - ✅ **Database Models** following the provided ERD structure:
   - `Owner` table with IdOwner, Name, Address, Photo, Birthday
   - `Property` table with IdProperty, Name, Address, Price, CodeInternal, Year, IdOwner
+  - `User` table with authentication, preferences, and favorites
   - Support for PropertyImage and PropertyTrace relationships
 
 ### Frontend (Web) - Following Technical Requirements
@@ -45,6 +48,12 @@ The project follows **Clean Architecture** principles with proper separation of 
 - ✅ **Property List Display** obtained from the API (as required)
 - ✅ **Advanced Filtering System** for name, address, and price range (as required)
 - ✅ **Property Details View** with modal display (as required)
+- ✅ **Pagination Component** with 12 properties per page
+- ✅ **JWT Authentication** with login/register functionality
+- ✅ **User Profile Management** with avatar upload and settings
+- ✅ **Favorites System** with heart icons and favorites filter
+- ✅ **Dark Mode Support** with theme persistence
+- ✅ **Toast Notifications** for user feedback
 - ✅ **Component-based Architecture** with reusable modules
 - ✅ **TypeScript Implementation** for type safety
 - ✅ **Performance Optimization** with efficient data handling
@@ -191,8 +200,9 @@ cd frontend-million
 
 The application is already configured to use **MongoDB Atlas** with sample data loaded:
 - **Database**: `PropertyDb`
-- **Collections**: `Owners` (4 records), `Properties` (8 records)
+- **Collections**: `Owners` (24 records), `Properties` (24 records), `Users` (test users)
 - **Connection**: Already configured in production
+- **Images**: 24 unique property images and 24 unique owner photos from Unsplash
 
 To use Atlas locally, update `Backend/PropertyApi/appsettings.json`:
 ```json
@@ -430,13 +440,16 @@ Este proyecto fue desarrollado como prueba técnica. Para sugerencias o mejoras:
 
 ### Mejoras Futuras
 
-- [ ] Autenticación y autorización con JWT
-- [ ] Paginación en el backend y frontend
-- [ ] Sistema de favoritos
+- [x] ~~Autenticación y autorización con JWT~~ ✅ **IMPLEMENTADO**
+- [x] ~~Paginación en el backend y frontend~~ ✅ **IMPLEMENTADO**
+- [x] ~~Sistema de favoritos~~ ✅ **IMPLEMENTADO**
+- [x] ~~Modo oscuro~~ ✅ **IMPLEMENTADO**
+- [x] ~~Notificaciones toast~~ ✅ **IMPLEMENTADO**
+- [x] ~~Gestión de perfil de usuario~~ ✅ **IMPLEMENTADO**
 - [ ] Comparador de propiedades
 - [ ] Chat en tiempo real
 - [ ] Integración con mapas (Google Maps)
-- [ ] Sistema de notificaciones
+- [ ] Sistema de notificaciones push
 - [ ] Panel de administración completo
 - [ ] Análisis y reportes
 
@@ -478,10 +491,11 @@ This project meets all the specified evaluation criteria:
 ## 📊 Database Backup
 
 **Database backup is available:**
-- **MongoDB Atlas Collections**: `Properties` (8 records), `Owners` (4 records)
+- **MongoDB Atlas Collections**: `Properties` (24 records), `Owners` (24 records), `Users` (test users)
 - **Seed Scripts**: Located in `Backend/PropertyApi/Scripts/`
 - **Connection String**: Provided in configuration files
 - **Sample Data**: Pre-loaded with realistic property and owner data
+- **Unique Images**: 24 unique property images and 24 unique owner photos from Unsplash
 
 ## 🔐 Access Information
 

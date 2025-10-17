@@ -63,3 +63,4 @@ namespace PropertyApi.Models
         public string Language { get; set; } = "en";
     }
 }
+

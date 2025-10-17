@@ -186,6 +186,56 @@ namespace PropertyApi.Controllers
             }
         }
 
+        [HttpPut("profile/update")]
+        [Authorize]
+        public async Task<IActionResult> UpdateProfile([FromBody] UpdateProfileDto profileDto)
+        {
+            try
+            {
+                var idUser = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                if (idUser == null) return Unauthorized();
+
+                // Validate input
+                if (string.IsNullOrWhiteSpace(profileDto.FirstName))
+                    return BadRequest(new { message = "First name is required." });
+                
+                if (string.IsNullOrWhiteSpace(profileDto.LastName))
+                    return BadRequest(new { message = "Last name is required." });
+
+                var success = await _userService.UpdateUserProfileAsync(idUser, profileDto);
+                if (!success) return BadRequest(new { message = "Failed to update profile." });
+
+                var updatedUser = await _userService.GetUserByIdAsync(idUser);
+                if (updatedUser == null) return NotFound(new { message = "User not found after update." });
+
+            var userProfile = new UserDto
+            {
+                IdUser = updatedUser.IdUser,
+                Username = updatedUser.Username,
+                Email = updatedUser.Email,
+                FirstName = updatedUser.FirstName,
+                LastName = updatedUser.LastName,
+                Avatar = updatedUser.Avatar,
+                FavoriteProperties = updatedUser.FavoriteProperties,
+                Preferences = new UserPreferencesDto
+                {
+                    Theme = updatedUser.Preferences.Theme,
+                    Notifications = updatedUser.Preferences.Notifications,
+                    Language = updatedUser.Preferences.Language
+                },
+                CreatedAt = updatedUser.CreatedAt,
+                LastLogin = updatedUser.LastLogin
+            };
+
+                return Ok(userProfile);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error updating profile");
+                return StatusCode(500, new { message = "An error occurred while updating profile." });
+            }
+        }
+
         private UserDto MapToUserDto(Models.User user)
         {
             return new UserDto
@@ -209,3 +259,4 @@ namespace PropertyApi.Controllers
         }
     }
 }
+

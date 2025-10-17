@@ -9,5 +9,9 @@ public interface IPropertyService
     Task<PropertyDto> CreatePropertyAsync(PropertyDto propertyDto);
     Task<bool> UpdatePropertyAsync(string id, PropertyDto propertyDto);
     Task<bool> DeletePropertyAsync(string id);
+    
+    // Pagination methods
+    Task<PagedResultDto<PropertyDto>> GetPropertiesPaginatedAsync(int page = 1, int pageSize = 12, PropertyFilterDto? filter = null);
+    Task<int> GetTotalPropertiesCountAsync(PropertyFilterDto? filter = null);
 }
 

@@ -66,4 +66,12 @@ namespace PropertyApi.DTOs
         public bool? Notifications { get; set; }
         public string? Language { get; set; }
     }
+
+    public class UpdateProfileDto
+    {
+        public string FirstName { get; set; } = string.Empty;
+        public string LastName { get; set; } = string.Empty;
+        public string? Avatar { get; set; }
+    }
 }
+

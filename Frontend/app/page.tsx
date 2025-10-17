@@ -1,68 +1,68 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
+import Header from './components/Header';
 import PropertyCard from './components/PropertyCard';
 import PropertyFilters from './components/PropertyFilters';
 import PropertyModal from './components/PropertyModal';
-import Header from './components/Header';
+import Pagination from './components/Pagination';
 import { Property, PropertyFilter } from './types';
-import { getProperties } from './services/api';
+import { propertyService, PagedResult } from './services/properties';
+import { useAuth } from './contexts/AuthContext';
+import { AuthModal } from './components/AuthModal';
 
 export default function Home() {
-  const [properties, setProperties] = useState<Property[]>([]);
-  const [filteredProperties, setFilteredProperties] = useState<Property[]>([]);
-  const [filters, setFilters] = useState<PropertyFilter>({});
+  const { user, isAuthenticated, showFavoritesOnly, clearFavoritesFilter } = useAuth();
+  const [pagedResult, setPagedResult] = useState<PagedResult<Property> | null>(null);
   const [selectedProperty, setSelectedProperty] = useState<Property | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [currentFilters, setCurrentFilters] = useState<PropertyFilter>({});
+  const [currentPage, setCurrentPage] = useState(1);
+  const [showLoginModal, setShowLoginModal] = useState(false);
 
-  useEffect(() => {
-    loadProperties();
-  }, []);
+  const pageSize = 12;
 
-  useEffect(() => {
-    applyFilters();
-  }, [filters, properties]);
-
-  const loadProperties = async () => {
+  const fetchProperties = useCallback(async (page: number = 1, filters: PropertyFilter = {}) => {
+    setIsLoading(true);
+    setError(null);
     try {
-      setIsLoading(true);
-      setError(null);
-      const data = await getProperties();
-      setProperties(data);
-      setFilteredProperties(data);
+      const result = await propertyService.getPropertiesPaginated(page, pageSize, filters);
+      setPagedResult(result);
     } catch (err) {
-      setError('Failed to load properties. Please try again later.');
-      console.error('Error loading properties:', err);
+      setError('Failed to fetch properties. Please try again later.');
+      console.error('Error fetching properties:', err);
     } finally {
       setIsLoading(false);
     }
-  };
+  }, []);
 
-  const applyFilters = () => {
-    let filtered = [...properties];
+  useEffect(() => {
+    fetchProperties(currentPage, currentFilters);
+  }, [fetchProperties, currentPage, currentFilters]);
 
-    if (filters.name) {
-      filtered = filtered.filter(p =>
-        p.name.toLowerCase().includes(filters.name!.toLowerCase()) ||
-        p.address.toLowerCase().includes(filters.name!.toLowerCase())
-      );
+  useEffect(() => {
+    // Reset to page 1 when filters change
+    if (currentPage !== 1) {
+      setCurrentPage(1);
+    } else {
+      fetchProperties(1, currentFilters);
     }
+  }, [currentFilters]);
 
-    if (filters.minPrice) {
-      filtered = filtered.filter(p => p.price >= filters.minPrice!);
+  const handleFilterChange = useCallback((filters: PropertyFilter) => {
+    setCurrentFilters(filters);
+    // If new filters are applied, clear the favorites filter
+    if (Object.keys(filters).length > 0 && showFavoritesOnly) {
+      clearFavoritesFilter();
     }
+  }, [showFavoritesOnly, clearFavoritesFilter]);
 
-    if (filters.maxPrice) {
-      filtered = filtered.filter(p => p.price <= filters.maxPrice!);
-    }
-
-    setFilteredProperties(filtered);
-  };
-
-  const handleFilterChange = (newFilters: PropertyFilter) => {
-    setFilters(newFilters);
-  };
+  const handlePageChange = useCallback((page: number) => {
+    setCurrentPage(page);
+    // Scroll to top when changing pages
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, []);
 
   const handlePropertyClick = (property: Property) => {
     setSelectedProperty(property);
@@ -70,6 +70,10 @@ export default function Home() {
 
   const handleCloseModal = () => {
     setSelectedProperty(null);
+  };
+
+  const handleLoginRequired = () => {
+    setShowLoginModal(true);
   };
 
   const scrollToProperties = () => {
@@ -86,22 +90,39 @@ export default function Home() {
     }
   };
 
+  // Filter properties for favorites if needed
+  const displayProperties = showFavoritesOnly && user 
+    ? pagedResult?.data.filter(p => user.favoriteProperties.includes(p.idProperty)) || []
+    : pagedResult?.data || [];
+
+  const totalItems = showFavoritesOnly && user 
+    ? user.favoriteProperties.length 
+    : pagedResult?.totalItems || 0;
+
+  const totalPages = showFavoritesOnly && user 
+    ? Math.ceil(user.favoriteProperties.length / pageSize)
+    : pagedResult?.totalPages || 1;
+
   return (
-    <main className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-slate-50">
+    <main className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-slate-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
       <Header onScrollToProperties={scrollToProperties} onScrollToFilters={scrollToFilters} />
       
       <div className="container mx-auto px-4 py-8">
         <div className="mb-8 text-center">
-          <h1 className="text-5xl font-bold text-gray-900 mb-4">
-            Discover Your <span className="text-primary-600">Dream Home</span>
+          <h1 className="text-5xl font-bold text-gray-900 dark:text-white mb-4">
+            Discover Your <span className="text-primary-600 dark:text-primary-400">Dream Home</span>
           </h1>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+          <p className="text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
             Explore our exclusive collection of luxury properties tailored to your lifestyle
           </p>
         </div>
 
         <div id="filters-section">
-          <PropertyFilters onFilterChange={handleFilterChange} />
+          <PropertyFilters 
+            onFilterChange={handleFilterChange} 
+            showFavoritesOnly={showFavoritesOnly}
+            onClearFavorites={clearFavoritesFilter}
+          />
         </div>
 
         {error && (
@@ -114,7 +135,7 @@ export default function Home() {
           <div className="flex justify-center items-center min-h-[400px]">
             <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-primary-600"></div>
           </div>
-        ) : filteredProperties.length === 0 ? (
+        ) : displayProperties.length === 0 ? (
           <div className="text-center py-16">
             <div className="inline-block p-8 bg-white rounded-full shadow-lg mb-4">
               <svg className="w-16 h-16 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -126,31 +147,56 @@ export default function Home() {
           </div>
         ) : (
           <>
-            <div id="properties-section" className="mb-6 text-gray-600">
-              <p className="text-lg">
-                Showing <span className="font-semibold text-primary-600">{filteredProperties.length}</span> {filteredProperties.length === 1 ? 'property' : 'properties'}
-              </p>
+            <div id="properties-section" className="mb-6 text-gray-600 dark:text-gray-300">
+              <div className="flex items-center justify-between">
+                <p className="text-lg">
+                  {showFavoritesOnly ? (
+                    <>Showing <span className="font-semibold text-primary-600 dark:text-primary-400">favorite properties</span> ({displayProperties.length})</>
+                  ) : (
+                    <>Showing <span className="font-semibold text-primary-600 dark:text-primary-400">{displayProperties.length}</span> of <span className="font-semibold text-primary-600 dark:text-primary-400">{totalItems}</span> properties</>
+                  )}
+                </p>
+              </div>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-              {filteredProperties.map((property) => (
+              {displayProperties.map((property) => (
                 <PropertyCard
                   key={property.idProperty}
                   property={property}
                   onClick={() => handlePropertyClick(property)}
+                  onLoginRequired={handleLoginRequired}
                 />
               ))}
             </div>
+
+            {/* Pagination */}
+            {!showFavoritesOnly && totalPages > 1 && (
+              <div className="mt-12">
+                <Pagination
+                  currentPage={currentPage}
+                  totalPages={totalPages}
+                  totalItems={totalItems}
+                  pageSize={pageSize}
+                  onPageChange={handlePageChange}
+                />
+              </div>
+            )}
           </>
         )}
       </div>
 
       {selectedProperty && (
         <PropertyModal
-          property={selectedProperty}
           onClose={handleCloseModal}
+          property={selectedProperty}
+          onLoginRequired={handleLoginRequired}
         />
       )}
+
+      <AuthModal 
+        isOpen={showLoginModal} 
+        onClose={() => setShowLoginModal(false)} 
+      />
     </main>
   );
 }
-

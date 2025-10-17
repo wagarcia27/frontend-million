@@ -1,6 +1,10 @@
 'use client';
 
 import { useState } from 'react';
+import { useAuth } from '../contexts/AuthContext';
+import { AuthModal } from './AuthModal';
+import { UserDropdown } from './UserDropdown';
+import { useToast } from './Toast';
 
 interface HeaderProps {
   onScrollToProperties?: () => void;
@@ -8,8 +12,11 @@ interface HeaderProps {
 }
 
 export default function Header({ onScrollToProperties, onScrollToFilters }: HeaderProps) {
+  const { isAuthenticated } = useAuth();
+  const { showToast } = useToast();
   const [showAboutModal, setShowAboutModal] = useState(false);
   const [showContactModal, setShowContactModal] = useState(false);
+  const [showAuthModal, setShowAuthModal] = useState(false);
   const [showMobileMenu, setShowMobileMenu] = useState(false);
   const [contactForm, setContactForm] = useState({
     name: '',
@@ -48,7 +55,7 @@ export default function Header({ onScrollToProperties, onScrollToFilters }: Head
   const handleContactSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     // Simulate form submission
-    alert('Thank you for your message! We will get back to you soon.');
+    showToast('We will contact you soon!', 'success');
     setContactForm({ name: '', email: '', message: '' });
     setShowContactModal(false);
   };
@@ -63,7 +70,7 @@ export default function Header({ onScrollToProperties, onScrollToFilters }: Head
 
   return (
     <>
-      <header className="bg-white shadow-md sticky top-0 z-50">
+      <header className="bg-white dark:bg-gray-900 shadow-md sticky top-0 z-50">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3 cursor-pointer" onClick={scrollToTop}>
@@ -73,44 +80,49 @@ export default function Header({ onScrollToProperties, onScrollToFilters }: Head
                 </svg>
               </div>
               <div>
-                <h1 className="text-2xl font-bold text-gray-900">Million Luxury</h1>
-                <p className="text-sm text-gray-500">Real Estate Excellence</p>
+                <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Million Luxury</h1>
+                <p className="text-sm text-gray-500 dark:text-gray-400">Real Estate Excellence</p>
               </div>
             </div>
             
             <nav className="hidden md:flex items-center space-x-6">
               <button 
                 onClick={scrollToProperties}
-                className="text-gray-600 hover:text-primary-600 font-medium transition hover:scale-105"
+                className="text-gray-600 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 font-medium transition hover:scale-105"
               >
                 Properties
               </button>
               <button 
                 onClick={() => setShowAboutModal(true)}
-                className="text-gray-600 hover:text-primary-600 font-medium transition hover:scale-105"
+                className="text-gray-600 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 font-medium transition hover:scale-105"
               >
                 About
               </button>
               <button 
                 onClick={() => setShowContactModal(true)}
-                className="text-gray-600 hover:text-primary-600 font-medium transition hover:scale-105"
+                className="text-gray-600 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 font-medium transition hover:scale-105"
               >
                 Contact
               </button>
-              <button 
-                onClick={scrollToFilters}
-                className="bg-primary-600 text-white px-6 py-2 rounded-lg hover:bg-primary-700 font-medium shadow-lg hover:shadow-xl transition hover:scale-105 transform"
-              >
-                Get Started
-              </button>
+              
+              {isAuthenticated ? (
+                <UserDropdown />
+              ) : (
+                <button 
+                  onClick={() => setShowAuthModal(true)} 
+                  className="bg-primary-600 text-white px-6 py-2 rounded-lg hover:bg-primary-700 font-medium shadow-lg hover:shadow-xl transition hover:scale-105 transform"
+                >
+                  Sign In
+                </button>
+              )}
             </nav>
 
             <button 
               onClick={toggleMobileMenu}
-              className="md:hidden p-2 hover:bg-gray-100 rounded-lg transition"
+              className="md:hidden p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition"
               aria-label="Toggle mobile menu"
             >
-              <svg className="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-6 h-6 text-gray-600 dark:text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 {showMobileMenu ? (
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                 ) : (
@@ -123,14 +135,14 @@ export default function Header({ onScrollToProperties, onScrollToFilters }: Head
 
         {/* Mobile Menu */}
         {showMobileMenu && (
-          <div className="md:hidden bg-white border-t border-gray-200 shadow-lg">
+          <div className="md:hidden bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 shadow-lg">
             <div className="px-4 py-3 space-y-2">
               <button 
                 onClick={() => {
                   scrollToProperties();
                   closeMobileMenu();
                 }}
-                className="block w-full text-left px-3 py-2 text-gray-600 hover:text-primary-600 hover:bg-gray-50 rounded-lg transition"
+                className="block w-full text-left px-3 py-2 text-gray-600 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg transition"
               >
                 Properties
               </button>
@@ -139,7 +151,7 @@ export default function Header({ onScrollToProperties, onScrollToFilters }: Head
                   setShowAboutModal(true);
                   closeMobileMenu();
                 }}
-                className="block w-full text-left px-3 py-2 text-gray-600 hover:text-primary-600 hover:bg-gray-50 rounded-lg transition"
+                className="block w-full text-left px-3 py-2 text-gray-600 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg transition"
               >
                 About
               </button>
@@ -148,19 +160,25 @@ export default function Header({ onScrollToProperties, onScrollToFilters }: Head
                   setShowContactModal(true);
                   closeMobileMenu();
                 }}
-                className="block w-full text-left px-3 py-2 text-gray-600 hover:text-primary-600 hover:bg-gray-50 rounded-lg transition"
+                className="block w-full text-left px-3 py-2 text-gray-600 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg transition"
               >
                 Contact
               </button>
-              <button 
-                onClick={() => {
-                  scrollToFilters();
-                  closeMobileMenu();
-                }}
-                className="block w-full text-center px-3 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition font-medium"
-              >
-                Get Started
-              </button>
+              {isAuthenticated ? (
+                <div className="pt-2 border-t border-gray-200 dark:border-gray-700">
+                  <UserDropdown />
+                </div>
+              ) : (
+                <button 
+                  onClick={() => {
+                    setShowAuthModal(true);
+                    closeMobileMenu();
+                  }}
+                  className="block w-full text-center px-3 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition font-medium"
+                >
+                  Sign In
+                </button>
+              )}
             </div>
           </div>
         )}
@@ -169,13 +187,13 @@ export default function Header({ onScrollToProperties, onScrollToFilters }: Head
       {/* About Modal */}
       {showAboutModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+          <div className="bg-white dark:bg-gray-800 rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
             <div className="p-6">
               <div className="flex justify-between items-center mb-6">
-                <h2 className="text-2xl font-bold text-gray-900">About Million Luxury</h2>
+                <h2 className="text-2xl font-bold text-gray-900 dark:text-white">About Million Luxury</h2>
                 <button 
                   onClick={() => setShowAboutModal(false)}
-                  className="text-gray-400 hover:text-gray-600 transition"
+                  className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition"
                 >
                   <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -183,25 +201,25 @@ export default function Header({ onScrollToProperties, onScrollToFilters }: Head
                 </button>
               </div>
               
-              <div className="space-y-4 text-gray-700">
-                <div className="bg-gradient-to-r from-primary-50 to-blue-50 p-6 rounded-lg">
-                  <h3 className="text-xl font-semibold text-primary-800 mb-3">🏆 Real Estate Excellence</h3>
-                  <p className="leading-relaxed">
+              <div className="space-y-4 text-gray-700 dark:text-gray-300">
+                <div className="bg-gradient-to-r from-primary-50 to-blue-50 dark:from-primary-900/20 dark:to-blue-900/20 p-6 rounded-lg">
+                  <h3 className="text-xl font-semibold text-primary-800 dark:text-primary-300 mb-3">🏆 Real Estate Excellence</h3>
+                  <p className="leading-relaxed text-gray-700 dark:text-gray-300">
                     Million Luxury is a premier real estate platform showcasing the finest properties worldwide. 
                     Our mission is to connect discerning clients with exceptional properties that exceed expectations.
                   </p>
                 </div>
 
                 <div className="grid md:grid-cols-2 gap-4">
-                  <div className="bg-gray-50 p-4 rounded-lg">
-                    <h4 className="font-semibold text-gray-900 mb-2">✨ Premium Properties</h4>
-                    <p className="text-sm text-gray-600">
+                  <div className="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
+                    <h4 className="font-semibold text-gray-900 dark:text-white mb-2">✨ Premium Properties</h4>
+                    <p className="text-sm text-gray-600 dark:text-gray-300">
                       Curated selection of luxury homes, apartments, and commercial spaces.
                     </p>
                   </div>
-                  <div className="bg-gray-50 p-4 rounded-lg">
-                    <h4 className="font-semibold text-gray-900 mb-2">🎯 Expert Guidance</h4>
-                    <p className="text-sm text-gray-600">
+                  <div className="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
+                    <h4 className="font-semibold text-gray-900 dark:text-white mb-2">🎯 Expert Guidance</h4>
+                    <p className="text-sm text-gray-600 dark:text-gray-300">
                       Professional real estate expertise to help you find your perfect property.
                     </p>
                   </div>
@@ -223,13 +241,13 @@ export default function Header({ onScrollToProperties, onScrollToFilters }: Head
       {/* Contact Modal */}
       {showContactModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-xl max-w-md w-full">
+          <div className="bg-white dark:bg-gray-800 rounded-xl max-w-md w-full">
             <div className="p-6">
               <div className="flex justify-between items-center mb-6">
-                <h2 className="text-2xl font-bold text-gray-900">Contact Us</h2>
+                <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Contact Us</h2>
                 <button 
                   onClick={() => setShowContactModal(false)}
-                  className="text-gray-400 hover:text-gray-600 transition"
+                  className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition"
                 >
                   <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -239,37 +257,37 @@ export default function Header({ onScrollToProperties, onScrollToFilters }: Head
               
               <form onSubmit={handleContactSubmit} className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Name</label>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Name</label>
                   <input
                     type="text"
                     required
                     value={contactForm.name}
                     onChange={(e) => setContactForm({...contactForm, name: e.target.value})}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                     placeholder="Your name"
                   />
                 </div>
                 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Email</label>
                   <input
                     type="email"
                     required
                     value={contactForm.email}
                     onChange={(e) => setContactForm({...contactForm, email: e.target.value})}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                     placeholder="your@email.com"
                   />
                 </div>
                 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Message</label>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Message</label>
                   <textarea
                     required
                     rows={4}
                     value={contactForm.message}
                     onChange={(e) => setContactForm({...contactForm, message: e.target.value})}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                     placeholder="How can we help you?"
                   />
                 </div>
@@ -282,8 +300,8 @@ export default function Header({ onScrollToProperties, onScrollToFilters }: Head
                 </button>
               </form>
               
-              <div className="mt-6 pt-4 border-t border-gray-200">
-                <div className="text-sm text-gray-600">
+              <div className="mt-6 pt-4 border-t border-gray-200 dark:border-gray-700">
+                <div className="text-sm text-gray-600 dark:text-gray-400">
                   <p className="flex items-center mb-2">
                     <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
@@ -302,6 +320,12 @@ export default function Header({ onScrollToProperties, onScrollToFilters }: Head
           </div>
         </div>
       )}
+
+      {/* Auth Modal */}
+      <AuthModal 
+        isOpen={showAuthModal} 
+        onClose={() => setShowAuthModal(false)} 
+      />
     </>
   );
 }

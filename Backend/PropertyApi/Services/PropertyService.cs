@@ -152,5 +152,109 @@ public class PropertyService : IPropertyService
         var result = await _properties.DeleteOneAsync(p => p.IdProperty == id);
         return result.DeletedCount > 0;
     }
+
+    public async Task<PagedResultDto<PropertyDto>> GetPropertiesPaginatedAsync(int page = 1, int pageSize = 12, PropertyFilterDto? filter = null)
+    {
+        var filterBuilder = Builders<Property>.Filter.Empty;
+
+        if (filter != null)
+        {
+            if (!string.IsNullOrEmpty(filter.Name))
+            {
+                filterBuilder &= Builders<Property>.Filter.Regex(p => p.Name, new MongoDB.Bson.BsonRegularExpression(filter.Name, "i"));
+            }
+
+            if (!string.IsNullOrEmpty(filter.Address))
+            {
+                filterBuilder &= Builders<Property>.Filter.Regex(p => p.Address, new MongoDB.Bson.BsonRegularExpression(filter.Address, "i"));
+            }
+
+            if (filter.MinPrice.HasValue)
+            {
+                filterBuilder &= Builders<Property>.Filter.Gte(p => p.Price, filter.MinPrice.Value);
+            }
+
+            if (filter.MaxPrice.HasValue)
+            {
+                filterBuilder &= Builders<Property>.Filter.Lte(p => p.Price, filter.MaxPrice.Value);
+            }
+        }
+
+        var skip = (page - 1) * pageSize;
+        var properties = await _properties.Find(filterBuilder)
+            .Skip(skip)
+            .Limit(pageSize)
+            .ToListAsync();
+
+        var totalItems = await _properties.CountDocumentsAsync(filterBuilder);
+        var totalPages = (int)Math.Ceiling((double)totalItems / pageSize);
+
+        var propertyDtos = new List<PropertyDto>();
+        foreach (var property in properties)
+        {
+            var owner = await _owners.Find(o => o.IdOwner == property.IdOwner).FirstOrDefaultAsync();
+            
+            propertyDtos.Add(new PropertyDto
+            {
+                IdProperty = property.IdProperty,
+                Name = property.Name,
+                Address = property.Address,
+                Price = property.Price,
+                CodeInternal = property.CodeInternal,
+                Year = property.Year,
+                IdOwner = property.IdOwner,
+                ImageUrl = property.ImageUrl,
+                Owner = owner != null ? new OwnerDto
+                {
+                    IdOwner = owner.IdOwner,
+                    Name = owner.Name,
+                    Address = owner.Address,
+                    Photo = owner.Photo,
+                    Birthday = owner.Birthday
+                } : null
+            });
+        }
+
+        return new PagedResultDto<PropertyDto>
+        {
+            Data = propertyDtos,
+            CurrentPage = page,
+            PageSize = pageSize,
+            TotalItems = (int)totalItems,
+            TotalPages = totalPages,
+            HasNextPage = page < totalPages,
+            HasPreviousPage = page > 1
+        };
+    }
+
+    public async Task<int> GetTotalPropertiesCountAsync(PropertyFilterDto? filter = null)
+    {
+        var filterBuilder = Builders<Property>.Filter.Empty;
+
+        if (filter != null)
+        {
+            if (!string.IsNullOrEmpty(filter.Name))
+            {
+                filterBuilder &= Builders<Property>.Filter.Regex(p => p.Name, new MongoDB.Bson.BsonRegularExpression(filter.Name, "i"));
+            }
+
+            if (!string.IsNullOrEmpty(filter.Address))
+            {
+                filterBuilder &= Builders<Property>.Filter.Regex(p => p.Address, new MongoDB.Bson.BsonRegularExpression(filter.Address, "i"));
+            }
+
+            if (filter.MinPrice.HasValue)
+            {
+                filterBuilder &= Builders<Property>.Filter.Gte(p => p.Price, filter.MinPrice.Value);
+            }
+
+            if (filter.MaxPrice.HasValue)
+            {
+                filterBuilder &= Builders<Property>.Filter.Lte(p => p.Price, filter.MaxPrice.Value);
+            }
+        }
+
+        return (int)await _properties.CountDocumentsAsync(filterBuilder);
+    }
 }
 

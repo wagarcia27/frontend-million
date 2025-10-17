@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 using PropertyApi.Configuration;
 using PropertyApi.DTOs;
@@ -19,6 +20,7 @@ namespace PropertyApi.Services
         Task<bool> RemoveFavoritePropertyAsync(string idUser, string propertyId);
         Task<List<PropertyDto>> GetFavoritePropertiesAsync(string idUser);
         Task<bool> UpdateLastLoginAsync(string idUser);
+        Task<bool> UpdateUserProfileAsync(string idUser, UpdateProfileDto profileDto);
     }
 
     public class UserService : IUserService
@@ -26,10 +28,11 @@ namespace PropertyApi.Services
         private readonly IMongoCollection<User> _users;
         private readonly IPropertyService _propertyService;
 
-        public UserService(MongoDbSettings settings, IPropertyService propertyService)
+        public UserService(IOptions<MongoDbSettings> settings, IPropertyService propertyService)
         {
-            var client = new MongoClient(settings.ConnectionString);
-            var database = client.GetDatabase(settings.DatabaseName);
+            var mongoSettings = settings.Value;
+            var client = new MongoClient(mongoSettings.ConnectionString);
+            var database = client.GetDatabase(mongoSettings.DatabaseName);
             _users = database.GetCollection<User>("Users");
             _propertyService = propertyService;
         }
@@ -138,11 +141,41 @@ namespace PropertyApi.Services
             return result.ModifiedCount > 0;
         }
 
+        public async Task<bool> UpdateUserProfileAsync(string idUser, UpdateProfileDto profileDto)
+        {
+            try
+            {
+                Console.WriteLine($"UpdateUserProfileAsync called with idUser: {idUser}");
+                Console.WriteLine($"Profile data - FirstName: '{profileDto.FirstName}', LastName: '{profileDto.LastName}', Avatar: '{profileDto.Avatar}'");
+                
+                // Use UpdateOneAsync instead of ReplaceOneAsync
+                var filter = Builders<User>.Filter.Eq(u => u.IdUser, idUser);
+                var update = Builders<User>.Update
+                    .Set(u => u.FirstName, profileDto.FirstName?.Trim() ?? string.Empty)
+                    .Set(u => u.LastName, profileDto.LastName?.Trim() ?? string.Empty)
+                    .Set(u => u.Avatar, string.IsNullOrEmpty(profileDto.Avatar) ? null : profileDto.Avatar);
+
+                Console.WriteLine($"Executing UpdateOneAsync with filter: {filter}");
+
+                var result = await _users.UpdateOneAsync(filter, update);
+                Console.WriteLine($"UpdateOneAsync result - ModifiedCount: {result.ModifiedCount}, MatchedCount: {result.MatchedCount}");
+                
+                return result.ModifiedCount > 0;
+            }
+            catch (Exception ex)
+            {
+                // Log the exception for debugging
+                Console.WriteLine($"Error in UpdateUserProfileAsync: {ex.Message}");
+                Console.WriteLine($"Stack trace: {ex.StackTrace}");
+                return false;
+            }
+        }
+
         private string HashPassword(string password)
         {
             using var sha256 = SHA256.Create();
             var hashedBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(password));
-            return Convert.ToBase64String(hashedBytes);
+            return Convert.ToHexString(hashedBytes).ToLower();
         }
 
         private bool VerifyPassword(string password, string hash)
@@ -152,3 +185,4 @@ namespace PropertyApi.Services
         }
     }
 }
+
