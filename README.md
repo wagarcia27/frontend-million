@@ -41,8 +41,9 @@ The project follows **Clean Architecture** principles with proper separation of 
 - ✅ **Database Models** following the provided ERD structure:
   - `Owner` table with IdOwner, Name, Address, Photo, Birthday
   - `Property` table with IdProperty, Name, Address, Price, CodeInternal, Year, IdOwner
+  - `PropertyTrace` table with IdPropertyTrace, DateSale, Name, Value, Tax, IdProperty
   - `User` table with authentication, preferences, and favorites
-  - Support for PropertyImage and PropertyTrace relationships
+  - Support for PropertyImage relationships (embebidas en Property)
 
 ### Frontend (Web) - Following Technical Requirements
 - ✅ **Modern Responsive Interface** with professional design
@@ -58,6 +59,7 @@ The project follows **Clean Architecture** principles with proper separation of 
 - ✅ **Google Maps Integration** with embedded maps and directions
 - ✅ **WhatsApp Integration** for direct contact with property owner
 - ✅ **Google Calendar Integration** for scheduling property visits
+- ✅ **Property History Tracking** with detailed transaction records via PropertyTrace
 - ✅ **Component-based Architecture** with reusable modules
 - ✅ **TypeScript Implementation** for type safety
 - ✅ **Performance Optimization** with efficient data handling
@@ -78,6 +80,13 @@ The project follows **Clean Architecture** principles with proper separation of 
 - **WhatsApp Integration**: Direct contact with property owner via WhatsApp (+57 300 498-6292)
 - **Google Calendar**: Schedule property visits with pre-filled event details
 - **Unsplash Images**: High-quality, unique property and owner photos
+
+### 📊 PropertyTrace System
+- **Complete Transaction History**: Track all property transactions (sales, listings, price adjustments)
+- **Tax Calculation**: Automatic tax calculation and tracking for each transaction
+- **Chronological Display**: Property history sorted by date with detailed transaction information
+- **Modal Interface**: Elegant modal displaying property transaction history
+- **Database Integration**: Full CRUD operations for property trace records
 
 ### 📱 Mobile Optimization
 - **Touch-Friendly Interface**: Optimized for mobile interactions
@@ -116,6 +125,10 @@ The project follows **Clean Architecture** principles with proper separation of 
 │  │   Properties       │     │       Owners         │        │
 │  │   Collection       │     │     Collection       │        │
 │  └────────────────────┘     └──────────────────────┘        │
+│  ┌────────────────────┐     ┌──────────────────────┐        │
+│  │  PropertyTraces    │     │       Users          │        │
+│  │   Collection       │     │     Collection       │        │
+│  └────────────────────┘     └──────────────────────┘        │
 └─────────────────────────────────────────────────────────────┘
 ```
 
@@ -146,15 +159,24 @@ frontend-million/
 │   │   ├── Configuration/
 │   │   │   └── MongoDbSettings.cs
 │   │   ├── Controllers/
-│   │   │   └── PropertiesController.cs
+│   │   │   ├── PropertiesController.cs
+│   │   │   ├── AuthController.cs
+│   │   │   └── PropertyTraceController.cs
 │   │   ├── DTOs/
-│   │   │   └── PropertyDto.cs
+│   │   │   ├── PropertyDto.cs
+│   │   │   └── AuthDto.cs
 │   │   ├── Models/
 │   │   │   ├── Owner.cs
-│   │   │   └── Property.cs
+│   │   │   ├── Property.cs
+│   │   │   └── PropertyTrace.cs
 │   │   ├── Services/
 │   │   │   ├── IPropertyService.cs
-│   │   │   └── PropertyService.cs
+│   │   │   ├── PropertyService.cs
+│   │   │   ├── IUserService.cs
+│   │   │   ├── UserService.cs
+│   │   │   ├── IPropertyTraceService.cs
+│   │   │   ├── PropertyTraceService.cs
+│   │   │   └── JwtService.cs
 │   │   ├── Scripts/
 │   │   │   └── seed-data.js
 │   │   ├── Program.cs
@@ -167,7 +189,13 @@ frontend-million/
 │   │   │   ├── Header.tsx
 │   │   │   ├── PropertyCard.tsx
 │   │   │   ├── PropertyFilters.tsx
-│   │   │   └── PropertyModal.tsx
+│   │   │   ├── PropertyModal.tsx
+│   │   │   ├── PropertyTraceModal.tsx
+│   │   │   ├── AuthModal.tsx
+│   │   │   ├── SettingsModal.tsx
+│   │   │   ├── UserDropdown.tsx
+│   │   │   ├── Pagination.tsx
+│   │   │   └── Toast.tsx
 │   │   ├── services/
 │   │   │   └── api.ts
 │   │   ├── globals.css

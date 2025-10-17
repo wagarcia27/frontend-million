@@ -13,6 +13,7 @@ builder.Services.Configure<MongoDbSettings>(
 // Add services to the container
 builder.Services.AddSingleton<IPropertyService, PropertyService>();
 builder.Services.AddSingleton<IUserService, UserService>();
+builder.Services.AddSingleton<IPropertyTraceService, PropertyTraceService>();
 builder.Services.AddSingleton<IJwtService, JwtService>();
 
 // Add JWT Authentication
