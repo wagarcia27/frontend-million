@@ -39,7 +39,6 @@ namespace PropertyApi.Services
                 new Claim(ClaimTypes.Email, user.Email),
                 new Claim("firstName", user.FirstName),
                 new Claim("lastName", user.LastName),
-                new Claim("avatar", user.Avatar ?? ""),
                 new Claim("theme", user.Preferences.Theme),
                 new Claim("notifications", user.Preferences.Notifications.ToString()),
                 new Claim("language", user.Preferences.Language)
