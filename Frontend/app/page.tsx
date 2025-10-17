@@ -29,9 +29,30 @@ export default function Home() {
     try {
       // For favorites, we need to get ALL properties to filter them properly
       if (showFavoritesOnly && user) {
-        // Get all properties (use a large page size to get everything)
-        const allProperties = await propertyService.getPropertiesPaginated(1, 1000, filters);
-        setPagedResult(allProperties);
+        // Get all properties by requesting multiple pages until we get everything
+        let allProperties: Property[] = [];
+        let currentPageNum = 1;
+        let hasMorePages = true;
+        
+        while (hasMorePages) {
+          const result = await propertyService.getPropertiesPaginated(currentPageNum, 100, filters);
+          allProperties = [...allProperties, ...result.data];
+          
+          if (result.data.length < 100 || currentPageNum >= result.totalPages) {
+            hasMorePages = false;
+          } else {
+            currentPageNum++;
+          }
+        }
+        
+        // Create a mock paged result with all properties
+        setPagedResult({
+          data: allProperties,
+          totalItems: allProperties.length,
+          totalPages: 1,
+          currentPage: 1,
+          pageSize: allProperties.length
+        });
       } else {
         const result = await propertyService.getPropertiesPaginated(page, pageSize, filters);
         setPagedResult(result);
