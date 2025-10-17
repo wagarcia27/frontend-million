@@ -13,7 +13,7 @@ The application consists of:
 - **Backend**: RESTful API built with .NET 9, C#, and MongoDB
 - **Frontend**: Modern web application with Next.js 14, React 18, and TailwindCSS
 - **Database**: MongoDB Atlas for property and owner data storage
-- **Testing**: Unit tests with NUnit
+- **Testing**: Unit tests with NUnit (Backend) and Jest + React Testing Library (Frontend)
 - **Documentation**: Swagger/OpenAPI for API documentation
 
 ## 🏗️ Architecture & Design
@@ -37,7 +37,7 @@ The project follows **Clean Architecture** principles with proper separation of 
 - ✅ **Robust Error Handling** and structured logging
 - ✅ **Swagger Documentation** for API endpoints
 - ✅ **CORS Configuration** for cross-origin requests
-- ✅ **Unit Testing** with NUnit (as specified in requirements)
+- ✅ **Unit Testing** with NUnit for backend services and controllers (as specified in requirements)
 - ✅ **Database Models** following the provided ERD structure:
   - `Owner` table with IdOwner, Name, Address, Photo, Birthday
   - `Property` table with IdProperty, Name, Address, Price, CodeInternal, Year, IdOwner
@@ -65,6 +65,7 @@ The project follows **Clean Architecture** principles with proper separation of 
 - ✅ **Performance Optimization** with efficient data handling
 - ✅ **Mobile-first Responsive Design** for all devices
 - ✅ **Professional UI/UX** with smooth animations and transitions
+- ✅ **Unit Testing** with Jest and React Testing Library for components and services
 
 ## 🚀 Advanced Features Implemented
 
@@ -310,12 +311,31 @@ npm run dev
 
 ### 5. Run Unit Tests
 
+#### Backend Tests (NUnit)
 ```bash
 cd Backend/PropertyApi.Tests
 dotnet test
 ```
 
+#### Frontend Tests (Jest + React Testing Library)
+```bash
+cd Frontend
+npm test
+
+# With coverage
+npm run test:coverage
+
+# Watch mode for development
+npm run test:watch
+```
+
 **Test Results**: All tests should pass, demonstrating proper unit testing implementation as required.
+
+**Frontend Test Coverage**:
+- ✅ Component rendering tests (PropertyCard, PropertyTraceModal)
+- ✅ Data structure validation tests
+- ✅ Price formatting tests
+- ✅ 12 tests passing successfully
 
 ## 📚 Documentación de la API
 
