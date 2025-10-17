@@ -1,37 +1,243 @@
-export default function Header() {
+'use client';
+
+import { useState } from 'react';
+
+interface HeaderProps {
+  onScrollToProperties?: () => void;
+  onScrollToFilters?: () => void;
+}
+
+export default function Header({ onScrollToProperties, onScrollToFilters }: HeaderProps) {
+  const [showAboutModal, setShowAboutModal] = useState(false);
+  const [showContactModal, setShowContactModal] = useState(false);
+  const [contactForm, setContactForm] = useState({
+    name: '',
+    email: '',
+    message: ''
+  });
+
+  const scrollToProperties = () => {
+    if (onScrollToProperties) {
+      onScrollToProperties();
+    } else {
+      // Fallback: scroll to properties section
+      const propertiesSection = document.getElementById('properties-section');
+      if (propertiesSection) {
+        propertiesSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }
+  };
+
+  const scrollToFilters = () => {
+    if (onScrollToFilters) {
+      onScrollToFilters();
+    } else {
+      // Fallback: scroll to filters section
+      const filtersSection = document.getElementById('filters-section');
+      if (filtersSection) {
+        filtersSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }
+  };
+
+  const handleContactSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    // Simulate form submission
+    alert('Thank you for your message! We will get back to you soon.');
+    setContactForm({ name: '', email: '', message: '' });
+    setShowContactModal(false);
+  };
+
   return (
-    <header className="bg-white shadow-md sticky top-0 z-50">
-      <div className="container mx-auto px-4 py-4">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-3">
-            <div className="bg-gradient-to-r from-primary-600 to-primary-400 p-2 rounded-lg">
-              <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-              </svg>
+    <>
+      <header className="bg-white shadow-md sticky top-0 z-50">
+        <div className="container mx-auto px-4 py-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-3 cursor-pointer" onClick={scrollToProperties}>
+              <div className="bg-gradient-to-r from-primary-600 to-primary-400 p-2 rounded-lg">
+                <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                </svg>
+              </div>
+              <div>
+                <h1 className="text-2xl font-bold text-gray-900">Million Luxury</h1>
+                <p className="text-sm text-gray-500">Real Estate Excellence</p>
+              </div>
             </div>
-            <div>
-              <h1 className="text-2xl font-bold text-gray-900">Million Luxury</h1>
-              <p className="text-sm text-gray-500">Real Estate Excellence</p>
+            
+            <nav className="hidden md:flex items-center space-x-6">
+              <button 
+                onClick={scrollToProperties}
+                className="text-gray-600 hover:text-primary-600 font-medium transition hover:scale-105"
+              >
+                Properties
+              </button>
+              <button 
+                onClick={() => setShowAboutModal(true)}
+                className="text-gray-600 hover:text-primary-600 font-medium transition hover:scale-105"
+              >
+                About
+              </button>
+              <button 
+                onClick={() => setShowContactModal(true)}
+                className="text-gray-600 hover:text-primary-600 font-medium transition hover:scale-105"
+              >
+                Contact
+              </button>
+              <button 
+                onClick={scrollToFilters}
+                className="bg-primary-600 text-white px-6 py-2 rounded-lg hover:bg-primary-700 font-medium shadow-lg hover:shadow-xl transition hover:scale-105 transform"
+              >
+                Get Started
+              </button>
+            </nav>
+
+            <button className="md:hidden p-2 hover:bg-gray-100 rounded-lg transition">
+              <svg className="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+              </svg>
+            </button>
+          </div>
+        </div>
+      </header>
+
+      {/* About Modal */}
+      {showAboutModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="p-6">
+              <div className="flex justify-between items-center mb-6">
+                <h2 className="text-2xl font-bold text-gray-900">About Million Luxury</h2>
+                <button 
+                  onClick={() => setShowAboutModal(false)}
+                  className="text-gray-400 hover:text-gray-600 transition"
+                >
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+              
+              <div className="space-y-4 text-gray-700">
+                <div className="bg-gradient-to-r from-primary-50 to-blue-50 p-6 rounded-lg">
+                  <h3 className="text-xl font-semibold text-primary-800 mb-3">🏆 Real Estate Excellence</h3>
+                  <p className="leading-relaxed">
+                    Million Luxury is a premier real estate platform showcasing the finest properties worldwide. 
+                    Our mission is to connect discerning clients with exceptional properties that exceed expectations.
+                  </p>
+                </div>
+
+                <div className="grid md:grid-cols-2 gap-4">
+                  <div className="bg-gray-50 p-4 rounded-lg">
+                    <h4 className="font-semibold text-gray-900 mb-2">✨ Premium Properties</h4>
+                    <p className="text-sm text-gray-600">
+                      Curated selection of luxury homes, apartments, and commercial spaces.
+                    </p>
+                  </div>
+                  <div className="bg-gray-50 p-4 rounded-lg">
+                    <h4 className="font-semibold text-gray-900 mb-2">🎯 Expert Guidance</h4>
+                    <p className="text-sm text-gray-600">
+                      Professional real estate expertise to help you find your perfect property.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="bg-primary-600 text-white p-4 rounded-lg">
+                  <h4 className="font-semibold mb-2">🌟 Our Promise</h4>
+                  <p className="text-sm">
+                    We combine cutting-edge technology with personalized service to deliver 
+                    an unmatched real estate experience.
+                  </p>
+                </div>
+              </div>
             </div>
           </div>
-          
-          <nav className="hidden md:flex items-center space-x-6">
-            <a href="#" className="text-gray-600 hover:text-primary-600 font-medium transition">Properties</a>
-            <a href="#" className="text-gray-600 hover:text-primary-600 font-medium transition">About</a>
-            <a href="#" className="text-gray-600 hover:text-primary-600 font-medium transition">Contact</a>
-            <button className="bg-primary-600 text-white px-6 py-2 rounded-lg hover:bg-primary-700 font-medium shadow-lg hover:shadow-xl transition">
-              Get Started
-            </button>
-          </nav>
-
-          <button className="md:hidden p-2 hover:bg-gray-100 rounded-lg transition">
-            <svg className="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-            </svg>
-          </button>
         </div>
-      </div>
-    </header>
+      )}
+
+      {/* Contact Modal */}
+      {showContactModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl max-w-md w-full">
+            <div className="p-6">
+              <div className="flex justify-between items-center mb-6">
+                <h2 className="text-2xl font-bold text-gray-900">Contact Us</h2>
+                <button 
+                  onClick={() => setShowContactModal(false)}
+                  className="text-gray-400 hover:text-gray-600 transition"
+                >
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+              
+              <form onSubmit={handleContactSubmit} className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Name</label>
+                  <input
+                    type="text"
+                    required
+                    value={contactForm.name}
+                    onChange={(e) => setContactForm({...contactForm, name: e.target.value})}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                    placeholder="Your name"
+                  />
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                  <input
+                    type="email"
+                    required
+                    value={contactForm.email}
+                    onChange={(e) => setContactForm({...contactForm, email: e.target.value})}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                    placeholder="your@email.com"
+                  />
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Message</label>
+                  <textarea
+                    required
+                    rows={4}
+                    value={contactForm.message}
+                    onChange={(e) => setContactForm({...contactForm, message: e.target.value})}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                    placeholder="How can we help you?"
+                  />
+                </div>
+                
+                <button
+                  type="submit"
+                  className="w-full bg-primary-600 text-white py-2 px-4 rounded-lg hover:bg-primary-700 transition font-medium"
+                >
+                  Send Message
+                </button>
+              </form>
+              
+              <div className="mt-6 pt-4 border-t border-gray-200">
+                <div className="text-sm text-gray-600">
+                  <p className="flex items-center mb-2">
+                    <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                    </svg>
+                    crios@millionluxury.com
+                  </p>
+                  <p className="flex items-center">
+                    <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                    </svg>
+                    +1 (555) 123-4567
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+    </>
   );
 }
 

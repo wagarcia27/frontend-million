@@ -72,9 +72,23 @@ export default function Home() {
     setSelectedProperty(null);
   };
 
+  const scrollToProperties = () => {
+    const propertiesSection = document.getElementById('properties-section');
+    if (propertiesSection) {
+      propertiesSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
+
+  const scrollToFilters = () => {
+    const filtersSection = document.getElementById('filters-section');
+    if (filtersSection) {
+      filtersSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
+
   return (
     <main className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-slate-50">
-      <Header />
+      <Header onScrollToProperties={scrollToProperties} onScrollToFilters={scrollToFilters} />
       
       <div className="container mx-auto px-4 py-8">
         <div className="mb-8 text-center">
@@ -86,7 +100,9 @@ export default function Home() {
           </p>
         </div>
 
-        <PropertyFilters onFilterChange={handleFilterChange} />
+        <div id="filters-section">
+          <PropertyFilters onFilterChange={handleFilterChange} />
+        </div>
 
         {error && (
           <div className="bg-red-50 border border-red-200 text-red-700 px-6 py-4 rounded-lg mb-8">
@@ -110,7 +126,7 @@ export default function Home() {
           </div>
         ) : (
           <>
-            <div className="mb-6 text-gray-600">
+            <div id="properties-section" className="mb-6 text-gray-600">
               <p className="text-lg">
                 Showing <span className="font-semibold text-primary-600">{filteredProperties.length}</span> {filteredProperties.length === 1 ? 'property' : 'properties'}
               </p>
