@@ -29,13 +29,20 @@ export default function Home() {
     try {
       // For favorites, we need to get ALL properties to filter them properly
       if (showFavoritesOnly && user) {
+        console.log('🔍 Fetching ALL properties for favorites...');
+        console.log('👤 User favorites:', user.favoriteProperties);
+        
         // Get all properties by requesting multiple pages until we get everything
         let allProperties: Property[] = [];
         let currentPageNum = 1;
         let hasMorePages = true;
         
         while (hasMorePages) {
+          console.log(`📄 Fetching page ${currentPageNum}...`);
           const result = await propertyService.getPropertiesPaginated(currentPageNum, 100, filters);
+          console.log(`📄 Page ${currentPageNum} returned:`, result.data.length, 'properties');
+          console.log(`📄 Total items in DB:`, result.totalItems);
+          
           allProperties = [...allProperties, ...result.data];
           
           if (result.data.length < 100 || currentPageNum >= result.totalPages) {
@@ -44,6 +51,13 @@ export default function Home() {
             currentPageNum++;
           }
         }
+        
+        console.log('🏠 Total properties fetched:', allProperties.length);
+        
+        // Filter favorites
+        const favorites = allProperties.filter(p => user.favoriteProperties.includes(p.idProperty));
+        console.log('❤️ Favorites found:', favorites.length);
+        console.log('❤️ Favorite IDs:', favorites.map(f => f.idProperty));
         
         // Create a mock paged result with all properties
         setPagedResult({
