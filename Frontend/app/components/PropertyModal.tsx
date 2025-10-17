@@ -90,7 +90,7 @@ export default function PropertyModal({ property, onClose, onLoginRequired }: Pr
       onClick={onClose}
     >
       <div
-        className="bg-white rounded-2xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto"
+        className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="relative">
@@ -140,11 +140,11 @@ export default function PropertyModal({ property, onClose, onLoginRequired }: Pr
 
         <div className="p-8">
           <div className="mb-6">
-            <span className="inline-block bg-primary-100 text-primary-700 px-4 py-2 rounded-full text-sm font-medium mb-4">
+            <span className="inline-block bg-primary-100 dark:bg-primary-900 text-primary-700 dark:text-primary-300 px-4 py-2 rounded-full text-sm font-medium mb-4">
               Code: {property.codeInternal}
             </span>
-            <h2 className="text-4xl font-bold text-gray-900 mb-4">{property.name}</h2>
-            <div className="flex items-start space-x-2 text-gray-600">
+            <h2 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">{property.name}</h2>
+            <div className="flex items-start space-x-2 text-gray-600 dark:text-gray-300">
               <svg className="w-6 h-6 flex-shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -154,57 +154,57 @@ export default function PropertyModal({ property, onClose, onLoginRequired }: Pr
           </div>
 
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-8">
-            <div className="bg-gray-50 p-4 rounded-lg">
+            <div className="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
               <div className="flex items-center space-x-2 mb-2">
-                <svg className="w-5 h-5 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-5 h-5 text-primary-600 dark:text-primary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                 </svg>
-                <span className="text-sm text-gray-600 font-medium">Year Built</span>
+                <span className="text-sm text-gray-600 dark:text-gray-300 font-medium">Year Built</span>
               </div>
-              <p className="text-2xl font-bold text-gray-900">{property.year}</p>
+              <p className="text-2xl font-bold text-gray-900 dark:text-white">{property.year}</p>
             </div>
 
-            <div className="bg-gray-50 p-4 rounded-lg">
+            <div className="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
               <div className="flex items-center space-x-2 mb-2">
-                <svg className="w-5 h-5 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-5 h-5 text-primary-600 dark:text-primary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
                 </svg>
-                <span className="text-sm text-gray-600 font-medium">Property ID</span>
+                <span className="text-sm text-gray-600 dark:text-gray-300 font-medium">Property ID</span>
               </div>
-              <p className="text-lg font-bold text-gray-900 truncate">{property.idProperty}</p>
+              <p className="text-lg font-bold text-gray-900 dark:text-white truncate">{property.idProperty}</p>
             </div>
 
-            <div className="bg-gray-50 p-4 rounded-lg col-span-2">
+            <div className="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg col-span-2">
               <div className="flex items-center space-x-2 mb-2">
-                <svg className="w-5 h-5 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-5 h-5 text-primary-600 dark:text-primary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
-                <span className="text-sm text-gray-600 font-medium">Price</span>
+                <span className="text-sm text-gray-600 dark:text-gray-300 font-medium">Price</span>
               </div>
-              <p className="text-2xl font-bold text-primary-600">{formatPrice(property.price)}</p>
+              <p className="text-2xl font-bold text-primary-600 dark:text-primary-400">{formatPrice(property.price)}</p>
             </div>
           </div>
 
           {property.owner && (
-            <div className="border-t border-gray-200 pt-6">
-              <h3 className="text-2xl font-bold text-gray-900 mb-4">Property Owner</h3>
-              <div className="bg-gradient-to-r from-primary-50 to-blue-50 p-6 rounded-xl">
+            <div className="border-t border-gray-200 dark:border-gray-600 pt-6">
+              <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">Property Owner</h3>
+              <div className="bg-gradient-to-r from-primary-50 to-blue-50 dark:from-primary-900 dark:to-blue-900 p-6 rounded-xl">
                 <div className="flex items-center space-x-4">
                   <img
                     src={property.owner.photo}
                     alt={property.owner.name}
-                    className="w-20 h-20 rounded-full object-cover border-4 border-white shadow-lg"
+                    className="w-20 h-20 rounded-full object-cover border-4 border-white dark:border-gray-700 shadow-lg"
                   />
                   <div className="flex-1">
-                    <h4 className="text-xl font-bold text-gray-900 mb-1">{property.owner.name}</h4>
-                    <div className="flex items-start space-x-2 text-gray-600 mb-2">
+                    <h4 className="text-xl font-bold text-gray-900 dark:text-white mb-1">{property.owner.name}</h4>
+                    <div className="flex items-start space-x-2 text-gray-600 dark:text-gray-300 mb-2">
                       <svg className="w-5 h-5 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                       </svg>
                       <span>{property.owner.address}</span>
                     </div>
-                    <div className="flex items-center space-x-2 text-gray-600">
+                    <div className="flex items-center space-x-2 text-gray-600 dark:text-gray-300">
                       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                       </svg>
@@ -217,10 +217,10 @@ export default function PropertyModal({ property, onClose, onLoginRequired }: Pr
           )}
 
           {/* Mapa de ubicación */}
-          <div className="border-t border-gray-200 pt-6">
-            <h3 className="text-2xl font-bold text-gray-900 mb-4">Location</h3>
-            <div className="bg-gray-50 p-4 rounded-lg">
-              <div className="flex items-center space-x-2 text-gray-600 mb-4">
+          <div className="border-t border-gray-200 dark:border-gray-600 pt-6">
+            <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">Location</h3>
+            <div className="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
+              <div className="flex items-center space-x-2 text-gray-600 dark:text-gray-300 mb-4">
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -229,7 +229,7 @@ export default function PropertyModal({ property, onClose, onLoginRequired }: Pr
               </div>
               
               {/* Mapa embebido de Google Maps */}
-              <div className="w-full h-64 rounded-lg overflow-hidden border border-gray-200">
+              <div className="w-full h-64 rounded-lg overflow-hidden border border-gray-200 dark:border-gray-600">
                 <iframe
                   src={`https://maps.google.com/maps?q=${encodeURIComponent(property.address)}&t=&z=15&ie=UTF8&iwloc=&output=embed`}
                   width="100%"
