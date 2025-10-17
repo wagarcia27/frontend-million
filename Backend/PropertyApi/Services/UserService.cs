@@ -145,8 +145,7 @@ namespace PropertyApi.Services
         {
             try
             {
-                Console.WriteLine($"UpdateUserProfileAsync called with idUser: {idUser}");
-                Console.WriteLine($"Profile data - FirstName: '{profileDto.FirstName}', LastName: '{profileDto.LastName}', Avatar: '{profileDto.Avatar}'");
+            // Update user profile
                 
                 // Use UpdateOneAsync instead of ReplaceOneAsync
                 var filter = Builders<User>.Filter.Eq(u => u.IdUser, idUser);
@@ -155,18 +154,13 @@ namespace PropertyApi.Services
                     .Set(u => u.LastName, profileDto.LastName?.Trim() ?? string.Empty)
                     .Set(u => u.Avatar, string.IsNullOrEmpty(profileDto.Avatar) ? null : profileDto.Avatar);
 
-                Console.WriteLine($"Executing UpdateOneAsync with filter: {filter}");
-
                 var result = await _users.UpdateOneAsync(filter, update);
-                Console.WriteLine($"UpdateOneAsync result - ModifiedCount: {result.ModifiedCount}, MatchedCount: {result.MatchedCount}");
                 
                 return result.ModifiedCount > 0;
             }
             catch (Exception ex)
             {
                 // Log the exception for debugging
-                Console.WriteLine($"Error in UpdateUserProfileAsync: {ex.Message}");
-                Console.WriteLine($"Stack trace: {ex.StackTrace}");
                 return false;
             }
         }

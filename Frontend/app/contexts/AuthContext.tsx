@@ -51,7 +51,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           applyTheme('light');
         }
       } catch (error) {
-        console.error('Error initializing auth:', error);
+        // Error initializing auth - user will need to login again
         tokenUtils.clearAuth();
         // Apply default light theme on error
         applyTheme('light');
@@ -66,13 +66,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   // Apply theme to document
   const applyTheme = (theme: string) => {
     const root = document.documentElement;
-    console.log(`Applying theme: ${theme}`); // Debug log
     if (theme === 'dark') {
       root.classList.add('dark');
-      console.log('Added dark class to root'); // Debug log
     } else {
       root.classList.remove('dark');
-      console.log('Removed dark class from root'); // Debug log
     }
   };
 

@@ -36,8 +36,7 @@ export const getProperties = async (filters?: PropertyFilter): Promise<Property[
     const response = await api.get<Property[]>('/properties', { params });
     return response.data;
   } catch (error) {
-    console.error('Error fetching properties:', error);
-    throw error;
+    throw new Error('Failed to fetch properties');
   }
 };
 
@@ -46,8 +45,7 @@ export const getPropertyById = async (id: string): Promise<Property> => {
     const response = await api.get<Property>(`/properties/${id}`);
     return response.data;
   } catch (error) {
-    console.error(`Error fetching property ${id}:`, error);
-    throw error;
+    throw new Error(`Failed to fetch property ${id}`);
   }
 };
 
@@ -56,8 +54,7 @@ export const createProperty = async (property: Omit<Property, 'idProperty'>): Pr
     const response = await api.post<Property>('/properties', property);
     return response.data;
   } catch (error) {
-    console.error('Error creating property:', error);
-    throw error;
+    throw new Error('Failed to create property');
   }
 };
 
@@ -65,8 +62,7 @@ export const updateProperty = async (id: string, property: Partial<Property>): P
   try {
     await api.put(`/properties/${id}`, property);
   } catch (error) {
-    console.error(`Error updating property ${id}:`, error);
-    throw error;
+    throw new Error(`Failed to update property ${id}`);
   }
 };
 
@@ -74,8 +70,7 @@ export const deleteProperty = async (id: string): Promise<void> => {
   try {
     await api.delete(`/properties/${id}`);
   } catch (error) {
-    console.error(`Error deleting property ${id}:`, error);
-    throw error;
+    throw new Error(`Failed to delete property ${id}`);
   }
 };
 

@@ -37,7 +37,7 @@ export default function PropertyModal({ property, onClose, onLoginRequired }: Pr
       setIsFavoriting(true);
       await toggleFavorite(property.idProperty);
     } catch (error) {
-      console.error('Error toggling favorite:', error);
+      // Error handling is done by the parent component
     } finally {
       setIsFavoriting(false);
     }

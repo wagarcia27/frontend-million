@@ -29,39 +29,25 @@ export default function Home() {
     try {
       // For favorites, we need to get ALL properties to filter them properly
       if (showFavoritesOnly && user) {
-        console.log('🔍 Fetching ALL properties for favorites...');
-        console.log('👤 User favorites:', user.favoriteProperties);
-        
         // Get all properties by requesting multiple pages until we get everything
         let allProperties: Property[] = [];
         let currentPageNum = 1;
         let hasMorePages = true;
         
         while (hasMorePages) {
-          console.log(`📄 Fetching page ${currentPageNum}...`);
           const result = await propertyService.getPropertiesPaginated(currentPageNum, 100, filters);
-          console.log(`📄 Page ${currentPageNum} returned:`, result.data.length, 'properties');
-          console.log(`📄 Total items in DB:`, result.totalItems);
-          console.log(`📄 Total pages:`, result.totalPages);
-          
           allProperties = [...allProperties, ...result.data];
           
-          // Fix: Check if we've reached the last page correctly
+          // Check if we've reached the last page correctly
           if (currentPageNum >= result.totalPages || result.data.length === 0) {
             hasMorePages = false;
-            console.log(`🛑 Stopping at page ${currentPageNum} because we've reached the end`);
           } else {
             currentPageNum++;
-            console.log(`➡️ Moving to page ${currentPageNum}`);
           }
         }
         
-        console.log('🏠 Total properties fetched:', allProperties.length);
-        
         // Filter favorites
         const favorites = allProperties.filter(p => user.favoriteProperties.includes(p.idProperty));
-        console.log('❤️ Favorites found:', favorites.length);
-        console.log('❤️ Favorite IDs:', favorites.map(f => f.idProperty));
         
         // Create a mock paged result with all properties
         setPagedResult({
@@ -79,7 +65,6 @@ export default function Home() {
       }
     } catch (err) {
       setError('Failed to fetch properties. Please try again later.');
-      console.error('Error fetching properties:', err);
     } finally {
       setIsLoading(false);
     }
