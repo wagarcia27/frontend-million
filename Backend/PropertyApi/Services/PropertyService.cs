@@ -29,7 +29,10 @@ public class PropertyService : IPropertyService
         {
             if (!string.IsNullOrEmpty(filter.Name))
             {
-                filterDefinition &= filterBuilder.Regex(p => p.Name, new MongoDB.Bson.BsonRegularExpression(filter.Name, "i"));
+                // Search in both Name and Address fields
+                var nameFilter = filterBuilder.Regex(p => p.Name, new MongoDB.Bson.BsonRegularExpression(filter.Name, "i"));
+                var addressFilter = filterBuilder.Regex(p => p.Address, new MongoDB.Bson.BsonRegularExpression(filter.Name, "i"));
+                filterDefinition &= filterBuilder.Or(nameFilter, addressFilter);
             }
 
             if (!string.IsNullOrEmpty(filter.Address))
@@ -161,7 +164,10 @@ public class PropertyService : IPropertyService
         {
             if (!string.IsNullOrEmpty(filter.Name))
             {
-                filterBuilder &= Builders<Property>.Filter.Regex(p => p.Name, new MongoDB.Bson.BsonRegularExpression(filter.Name, "i"));
+                // Search in both Name and Address fields
+                var nameFilter = Builders<Property>.Filter.Regex(p => p.Name, new MongoDB.Bson.BsonRegularExpression(filter.Name, "i"));
+                var addressFilter = Builders<Property>.Filter.Regex(p => p.Address, new MongoDB.Bson.BsonRegularExpression(filter.Name, "i"));
+                filterBuilder &= Builders<Property>.Filter.Or(nameFilter, addressFilter);
             }
 
             if (!string.IsNullOrEmpty(filter.Address))
@@ -235,7 +241,10 @@ public class PropertyService : IPropertyService
         {
             if (!string.IsNullOrEmpty(filter.Name))
             {
-                filterBuilder &= Builders<Property>.Filter.Regex(p => p.Name, new MongoDB.Bson.BsonRegularExpression(filter.Name, "i"));
+                // Search in both Name and Address fields
+                var nameFilter = Builders<Property>.Filter.Regex(p => p.Name, new MongoDB.Bson.BsonRegularExpression(filter.Name, "i"));
+                var addressFilter = Builders<Property>.Filter.Regex(p => p.Address, new MongoDB.Bson.BsonRegularExpression(filter.Name, "i"));
+                filterBuilder &= Builders<Property>.Filter.Or(nameFilter, addressFilter);
             }
 
             if (!string.IsNullOrEmpty(filter.Address))

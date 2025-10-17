@@ -215,9 +215,9 @@ frontend-million/
 
 **The application is fully deployed and accessible:**
 
-- **Frontend (Live)**: https://frontend-million-fahfwmwtf-williams-projects-553de51f.vercel.app/
-- **Backend API (Live)**: https://property-api-k9aq.onrender.com/
-- **API Documentation**: https://property-api-k9aq.onrender.com/
+- **Frontend (En Vivo)**: https://frontend-million-fahfwmwtf-williams-projects-553de51f.vercel.app/
+- **API Backend (En Vivo)**: https://property-api-k9aq.onrender.com/api
+- **Documentación API**: https://property-api-k9aq.onrender.com/
 - **Health Check**: https://property-api-k9aq.onrender.com/api/health/ping
 
 ## 📋 Setup and Run Instructions
