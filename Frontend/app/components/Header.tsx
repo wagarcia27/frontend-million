@@ -10,6 +10,7 @@ interface HeaderProps {
 export default function Header({ onScrollToProperties, onScrollToFilters }: HeaderProps) {
   const [showAboutModal, setShowAboutModal] = useState(false);
   const [showContactModal, setShowContactModal] = useState(false);
+  const [showMobileMenu, setShowMobileMenu] = useState(false);
   const [contactForm, setContactForm] = useState({
     name: '',
     email: '',
@@ -26,6 +27,10 @@ export default function Header({ onScrollToProperties, onScrollToFilters }: Head
         propertiesSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
       }
     }
+  };
+
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const scrollToFilters = () => {
@@ -48,12 +53,20 @@ export default function Header({ onScrollToProperties, onScrollToFilters }: Head
     setShowContactModal(false);
   };
 
+  const toggleMobileMenu = () => {
+    setShowMobileMenu(!showMobileMenu);
+  };
+
+  const closeMobileMenu = () => {
+    setShowMobileMenu(false);
+  };
+
   return (
     <>
       <header className="bg-white shadow-md sticky top-0 z-50">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-3 cursor-pointer" onClick={scrollToProperties}>
+            <div className="flex items-center space-x-3 cursor-pointer" onClick={scrollToTop}>
               <div className="bg-gradient-to-r from-primary-600 to-primary-400 p-2 rounded-lg">
                 <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
@@ -92,13 +105,65 @@ export default function Header({ onScrollToProperties, onScrollToFilters }: Head
               </button>
             </nav>
 
-            <button className="md:hidden p-2 hover:bg-gray-100 rounded-lg transition">
+            <button 
+              onClick={toggleMobileMenu}
+              className="md:hidden p-2 hover:bg-gray-100 rounded-lg transition"
+              aria-label="Toggle mobile menu"
+            >
               <svg className="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                {showMobileMenu ? (
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                ) : (
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                )}
               </svg>
             </button>
           </div>
         </div>
+
+        {/* Mobile Menu */}
+        {showMobileMenu && (
+          <div className="md:hidden bg-white border-t border-gray-200 shadow-lg">
+            <div className="px-4 py-3 space-y-2">
+              <button 
+                onClick={() => {
+                  scrollToProperties();
+                  closeMobileMenu();
+                }}
+                className="block w-full text-left px-3 py-2 text-gray-600 hover:text-primary-600 hover:bg-gray-50 rounded-lg transition"
+              >
+                Properties
+              </button>
+              <button 
+                onClick={() => {
+                  setShowAboutModal(true);
+                  closeMobileMenu();
+                }}
+                className="block w-full text-left px-3 py-2 text-gray-600 hover:text-primary-600 hover:bg-gray-50 rounded-lg transition"
+              >
+                About
+              </button>
+              <button 
+                onClick={() => {
+                  setShowContactModal(true);
+                  closeMobileMenu();
+                }}
+                className="block w-full text-left px-3 py-2 text-gray-600 hover:text-primary-600 hover:bg-gray-50 rounded-lg transition"
+              >
+                Contact
+              </button>
+              <button 
+                onClick={() => {
+                  scrollToFilters();
+                  closeMobileMenu();
+                }}
+                className="block w-full text-center px-3 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition font-medium"
+              >
+                Get Started
+              </button>
+            </div>
+          </div>
+        )}
       </header>
 
       {/* About Modal */}
