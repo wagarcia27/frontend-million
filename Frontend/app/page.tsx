@@ -27,15 +27,22 @@ export default function Home() {
     setIsLoading(true);
     setError(null);
     try {
-      const result = await propertyService.getPropertiesPaginated(page, pageSize, filters);
-      setPagedResult(result);
+      // For favorites, we need to get ALL properties to filter them properly
+      if (showFavoritesOnly && user) {
+        // Get all properties (use a large page size to get everything)
+        const allProperties = await propertyService.getPropertiesPaginated(1, 1000, filters);
+        setPagedResult(allProperties);
+      } else {
+        const result = await propertyService.getPropertiesPaginated(page, pageSize, filters);
+        setPagedResult(result);
+      }
     } catch (err) {
       setError('Failed to fetch properties. Please try again later.');
       console.error('Error fetching properties:', err);
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  }, [showFavoritesOnly, user]);
 
   useEffect(() => {
     fetchProperties(currentPage, currentFilters);
@@ -91,16 +98,20 @@ export default function Home() {
   };
 
   // Filter properties for favorites if needed
-  const displayProperties = showFavoritesOnly && user 
+  const allFavorites = showFavoritesOnly && user 
     ? pagedResult?.data.filter(p => user.favoriteProperties.includes(p.idProperty)) || []
+    : [];
+
+  const displayProperties = showFavoritesOnly && user 
+    ? allFavorites
     : pagedResult?.data || [];
 
   const totalItems = showFavoritesOnly && user 
-    ? user.favoriteProperties.length 
+    ? allFavorites.length 
     : pagedResult?.totalItems || 0;
 
   const totalPages = showFavoritesOnly && user 
-    ? Math.ceil(user.favoriteProperties.length / pageSize)
+    ? Math.ceil(allFavorites.length / pageSize)
     : pagedResult?.totalPages || 1;
 
   // For favorites, we need to paginate the filtered results
