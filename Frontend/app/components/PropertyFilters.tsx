@@ -59,7 +59,7 @@ export default function PropertyFilters({ onFilterChange, showFavoritesOnly = fa
         </div>
         <button
           onClick={() => setIsExpanded(!isExpanded)}
-          className="md:hidden p-2 hover:bg-gray-100 rounded-lg transition"
+          className="lg:hidden p-2 hover:bg-gray-100 rounded-lg transition"
         >
           <svg
             className={`w-5 h-5 text-gray-600 transform transition-transform ${isExpanded ? 'rotate-180' : ''}`}
@@ -72,7 +72,7 @@ export default function PropertyFilters({ onFilterChange, showFavoritesOnly = fa
         </button>
       </div>
 
-      <div className={`grid grid-cols-1 md:grid-cols-4 gap-4 ${isExpanded ? 'block' : 'hidden md:grid'}`}>
+      <div className={`grid grid-cols-1 lg:grid-cols-4 gap-4 ${isExpanded ? 'block' : 'hidden lg:grid'}`}>
         <div className="relative">
           <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
             Search by Name or Address
@@ -118,7 +118,10 @@ export default function PropertyFilters({ onFilterChange, showFavoritesOnly = fa
           </div>
         </div>
 
-        <div className="flex items-end">
+        <div className="relative">
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            Actions
+          </label>
           <button
             onClick={clearFilters}
             disabled={!shouldEnableClearButton}

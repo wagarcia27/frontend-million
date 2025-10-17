@@ -112,32 +112,50 @@ export default function Home() {
   const scrollToProperties = () => {
     const propertiesSection = document.getElementById('properties-section');
     if (propertiesSection) {
-      const elementPosition = propertiesSection.getBoundingClientRect().top;
-      // Responsive offset: less on mobile, more on desktop
       const isMobile = window.innerWidth < 768;
-      const offset = isMobile ? 20 : 100; // 20px on mobile, 100px on desktop
-      const offsetPosition = elementPosition + window.pageYOffset - offset;
       
-      window.scrollTo({
-        top: offsetPosition,
-        behavior: 'smooth'
-      });
+      if (isMobile) {
+        // On mobile, use scrollIntoView with center positioning
+        propertiesSection.scrollIntoView({ 
+          behavior: 'smooth', 
+          block: 'center',
+          inline: 'nearest'
+        });
+      } else {
+        // On desktop, use custom offset for better spacing
+        const elementPosition = propertiesSection.getBoundingClientRect().top;
+        const offsetPosition = elementPosition + window.pageYOffset - 100;
+        
+        window.scrollTo({
+          top: offsetPosition,
+          behavior: 'smooth'
+        });
+      }
     }
   };
 
   const scrollToFilters = () => {
     const filtersSection = document.getElementById('filters-section');
     if (filtersSection) {
-      const elementPosition = filtersSection.getBoundingClientRect().top;
-      // Responsive offset: less on mobile, more on desktop
       const isMobile = window.innerWidth < 768;
-      const offset = isMobile ? 20 : 80; // 20px on mobile, 80px on desktop
-      const offsetPosition = elementPosition + window.pageYOffset - offset;
       
-      window.scrollTo({
-        top: offsetPosition,
-        behavior: 'smooth'
-      });
+      if (isMobile) {
+        // On mobile, use scrollIntoView with center positioning
+        filtersSection.scrollIntoView({ 
+          behavior: 'smooth', 
+          block: 'center',
+          inline: 'nearest'
+        });
+      } else {
+        // On desktop, use custom offset for better spacing
+        const elementPosition = filtersSection.getBoundingClientRect().top;
+        const offsetPosition = elementPosition + window.pageYOffset - 80;
+        
+        window.scrollTo({
+          top: offsetPosition,
+          behavior: 'smooth'
+        });
+      }
     }
   };
 
