@@ -158,7 +158,7 @@ namespace PropertyApi.Services
                 
                 return result.ModifiedCount > 0;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 // Log the exception for debugging
                 return false;
