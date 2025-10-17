@@ -113,7 +113,10 @@ export default function Home() {
     const propertiesSection = document.getElementById('properties-section');
     if (propertiesSection) {
       const elementPosition = propertiesSection.getBoundingClientRect().top;
-      const offsetPosition = elementPosition + window.pageYOffset - 100; // 100px offset from top
+      // Responsive offset: less on mobile, more on desktop
+      const isMobile = window.innerWidth < 768;
+      const offset = isMobile ? 20 : 100; // 20px on mobile, 100px on desktop
+      const offsetPosition = elementPosition + window.pageYOffset - offset;
       
       window.scrollTo({
         top: offsetPosition,
@@ -125,7 +128,16 @@ export default function Home() {
   const scrollToFilters = () => {
     const filtersSection = document.getElementById('filters-section');
     if (filtersSection) {
-      filtersSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      const elementPosition = filtersSection.getBoundingClientRect().top;
+      // Responsive offset: less on mobile, more on desktop
+      const isMobile = window.innerWidth < 768;
+      const offset = isMobile ? 20 : 80; // 20px on mobile, 80px on desktop
+      const offsetPosition = elementPosition + window.pageYOffset - offset;
+      
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: 'smooth'
+      });
     }
   };
 
