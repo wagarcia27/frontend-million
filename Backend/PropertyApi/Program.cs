@@ -45,17 +45,16 @@ builder.Services.AddSwaggerGen(c =>
 var app = builder.Build();
 
 // Configure the HTTP request pipeline
-if (app.Environment.IsDevelopment())
+// Enable Swagger in all environments for debugging
+app.UseSwagger();
+app.UseSwaggerUI(c =>
 {
-    app.UseSwagger();
-    app.UseSwaggerUI(c =>
-    {
-        c.SwaggerEndpoint("/swagger/v1/swagger.json", "Property API V1");
-        c.RoutePrefix = string.Empty; // Set Swagger UI at app's root
-    });
-}
+    c.SwaggerEndpoint("/swagger/v1/swagger.json", "Property API V1");
+    c.RoutePrefix = string.Empty; // Set Swagger UI at app's root
+});
 
-app.UseHttpsRedirection();
+// Disable HTTPS redirection for Render deployment
+// app.UseHttpsRedirection();
 
 app.UseCors("AllowAll");
 
