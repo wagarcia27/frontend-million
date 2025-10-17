@@ -59,6 +59,31 @@ export default function PropertyModal({ property, onClose, onLoginRequired }: Pr
     });
   };
 
+  const handleWhatsAppContact = () => {
+    const phoneNumber = '573004986292'; // Tu número de Colombia sin el +
+    const message = `Hola! Estoy interesado en la propiedad "${property.name}" por ${formatPrice(property.price)}. ¿Podrías darme más información?`;
+    const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
+    window.open(whatsappUrl, '_blank');
+  };
+
+  const handleScheduleVisit = () => {
+    // Crear evento para Google Calendar del usuario
+    const eventTitle = `Visita a propiedad: ${property.name}`;
+    const eventDetails = `Propiedad: ${property.name}\nDirección: ${property.address}\nPrecio: ${formatPrice(property.price)}\n\nDetalles adicionales:\n- Año de construcción: ${property.year}\n- Código interno: ${property.codeInternal}\n- ID de propiedad: ${property.idProperty}`;
+    
+    // Fecha por defecto: mañana a las 10:00 AM
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    tomorrow.setHours(10, 0, 0, 0);
+    
+    const startDate = tomorrow.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
+    const endDate = new Date(tomorrow.getTime() + 60 * 60 * 1000).toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z'; // +1 hora
+    
+    const googleCalendarUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(eventTitle)}&details=${encodeURIComponent(eventDetails)}&dates=${startDate}/${endDate}`;
+    
+    window.open(googleCalendarUrl, '_blank');
+  };
+
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-50 backdrop-blur-sm"
@@ -192,13 +217,19 @@ export default function PropertyModal({ property, onClose, onLoginRequired }: Pr
           )}
 
           <div className="mt-8 flex flex-col sm:flex-row gap-4">
-            <button className="flex-1 bg-primary-600 text-white px-8 py-4 rounded-lg hover:bg-primary-700 font-bold text-lg shadow-lg hover:shadow-xl transition flex items-center justify-center space-x-2">
+            <button 
+              onClick={handleWhatsAppContact}
+              className="flex-1 bg-primary-600 text-white px-8 py-4 rounded-lg hover:bg-primary-700 font-bold text-lg shadow-lg hover:shadow-xl transition flex items-center justify-center space-x-2"
+            >
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
               </svg>
               <span>Contact Owner</span>
             </button>
-            <button className="flex-1 bg-white border-2 border-primary-600 text-primary-600 px-8 py-4 rounded-lg hover:bg-primary-50 font-bold text-lg transition flex items-center justify-center space-x-2">
+            <button 
+              onClick={handleScheduleVisit}
+              className="flex-1 bg-white border-2 border-primary-600 text-primary-600 px-8 py-4 rounded-lg hover:bg-primary-50 font-bold text-lg transition flex items-center justify-center space-x-2"
+            >
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
               </svg>
