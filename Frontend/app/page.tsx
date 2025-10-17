@@ -69,7 +69,9 @@ export default function Home() {
           totalItems: allProperties.length,
           totalPages: 1,
           currentPage: 1,
-          pageSize: allProperties.length
+          pageSize: allProperties.length,
+          hasNextPage: false,
+          hasPreviousPage: false
         });
       } else {
         const result = await propertyService.getPropertiesPaginated(page, pageSize, filters);

@@ -83,27 +83,33 @@ export default function PropertyModal({ property, onClose, onLoginRequired }: Pr
             </svg>
           </button>
           
-          <button
-            onClick={handleFavoriteClick}
-            disabled={isFavoriting}
-            className={`absolute top-4 left-4 p-2 rounded-full backdrop-blur-sm transition-all duration-200 ${
-              isAuthenticated && isFavorite(property.idProperty)
-                ? 'bg-red-500/90 text-white shadow-lg'
-                : 'bg-white/80 text-gray-600 hover:bg-red-50/90 hover:text-red-500'
-            } ${isFavoriting ? 'opacity-50 cursor-not-allowed' : ''}`}
-          >
-            <svg 
-              className={`w-6 h-6 transition-all duration-200 ${isFavoriting ? 'animate-pulse scale-110' : ''}`}
-              fill={isAuthenticated && isFavorite(property.idProperty) ? 'currentColor' : 'none'} 
-              stroke="currentColor" 
-              strokeWidth={2}
-              viewBox="0 0 24 24"
+          {/* Price and Heart grouped together on the left */}
+          <div className="absolute top-4 left-4 flex flex-col space-y-3">
+            {/* Heart button */}
+            <button
+              onClick={handleFavoriteClick}
+              disabled={isFavoriting}
+              className={`p-2 rounded-full backdrop-blur-sm transition-all duration-200 ${
+                isAuthenticated && isFavorite(property.idProperty)
+                  ? 'bg-red-500/90 text-white shadow-lg'
+                  : 'bg-white/80 text-gray-600 hover:bg-red-50/90 hover:text-red-500'
+              } ${isFavoriting ? 'opacity-50 cursor-not-allowed' : ''}`}
             >
-              <path strokeLinecap="round" strokeLinejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-            </svg>
-          </button>
-          <div className="absolute bottom-4 right-4 bg-primary-600 text-white px-6 py-3 rounded-full font-bold text-2xl shadow-xl">
-            {formatPrice(property.price)}
+              <svg 
+                className={`w-6 h-6 transition-all duration-200 ${isFavoriting ? 'animate-pulse scale-110' : ''}`}
+                fill={isAuthenticated && isFavorite(property.idProperty) ? 'currentColor' : 'none'} 
+                stroke="currentColor" 
+                strokeWidth={2}
+                viewBox="0 0 24 24"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+              </svg>
+            </button>
+            
+            {/* Price badge */}
+            <div className="bg-primary-600 text-white px-4 py-2 rounded-full font-bold text-lg shadow-xl">
+              {formatPrice(property.price)}
+            </div>
           </div>
         </div>
 
