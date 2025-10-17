@@ -127,7 +127,13 @@ export default function Home() {
   const scrollToProperties = () => {
     const propertiesSection = document.getElementById('properties-section');
     if (propertiesSection) {
-      propertiesSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      const elementPosition = propertiesSection.getBoundingClientRect().top;
+      const offsetPosition = elementPosition + window.pageYOffset - 100; // 100px offset from top
+      
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: 'smooth'
+      });
     }
   };
 
