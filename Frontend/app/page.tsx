@@ -42,13 +42,17 @@ export default function Home() {
           const result = await propertyService.getPropertiesPaginated(currentPageNum, 100, filters);
           console.log(`📄 Page ${currentPageNum} returned:`, result.data.length, 'properties');
           console.log(`📄 Total items in DB:`, result.totalItems);
+          console.log(`📄 Total pages:`, result.totalPages);
           
           allProperties = [...allProperties, ...result.data];
           
-          if (result.data.length < 100 || currentPageNum >= result.totalPages) {
+          // Fix: Check if we've reached the last page correctly
+          if (currentPageNum >= result.totalPages || result.data.length === 0) {
             hasMorePages = false;
+            console.log(`🛑 Stopping at page ${currentPageNum} because we've reached the end`);
           } else {
             currentPageNum++;
+            console.log(`➡️ Moving to page ${currentPageNum}`);
           }
         }
         
