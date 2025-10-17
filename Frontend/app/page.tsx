@@ -103,6 +103,11 @@ export default function Home() {
     ? Math.ceil(user.favoriteProperties.length / pageSize)
     : pagedResult?.totalPages || 1;
 
+  // For favorites, we need to paginate the filtered results
+  const paginatedFavorites = showFavoritesOnly && user 
+    ? displayProperties.slice((currentPage - 1) * pageSize, currentPage * pageSize)
+    : displayProperties;
+
   return (
     <main className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-slate-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
       <Header onScrollToProperties={scrollToProperties} onScrollToFilters={scrollToFilters} />
@@ -135,7 +140,7 @@ export default function Home() {
           <div className="flex justify-center items-center min-h-[400px]">
             <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-primary-600"></div>
           </div>
-        ) : displayProperties.length === 0 ? (
+        ) : paginatedFavorites.length === 0 ? (
           <div className="text-center py-16">
             <div className="inline-block p-8 bg-white rounded-full shadow-lg mb-4">
               <svg className="w-16 h-16 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -151,15 +156,15 @@ export default function Home() {
               <div className="flex items-center justify-between">
                 <p className="text-lg">
                   {showFavoritesOnly ? (
-                    <>Showing <span className="font-semibold text-primary-600 dark:text-primary-400">favorite properties</span> ({displayProperties.length})</>
+                    <>Showing <span className="font-semibold text-primary-600 dark:text-primary-400">{paginatedFavorites.length}</span> of <span className="font-semibold text-primary-600 dark:text-primary-400">{totalItems}</span> favorite properties</>
                   ) : (
-                    <>Showing <span className="font-semibold text-primary-600 dark:text-primary-400">{displayProperties.length}</span> of <span className="font-semibold text-primary-600 dark:text-primary-400">{totalItems}</span> properties</>
+                    <>Showing <span className="font-semibold text-primary-600 dark:text-primary-400">{paginatedFavorites.length}</span> of <span className="font-semibold text-primary-600 dark:text-primary-400">{totalItems}</span> properties</>
                   )}
                 </p>
               </div>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-              {displayProperties.map((property) => (
+              {paginatedFavorites.map((property) => (
                 <PropertyCard
                   key={property.idProperty}
                   property={property}
@@ -170,7 +175,7 @@ export default function Home() {
             </div>
 
             {/* Pagination */}
-            {!showFavoritesOnly && totalPages > 1 && (
+            {totalPages > 1 && (
               <div className="mt-12">
                 <Pagination
                   currentPage={currentPage}
