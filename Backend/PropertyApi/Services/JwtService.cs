@@ -36,12 +36,7 @@ namespace PropertyApi.Services
             {
                 new Claim(ClaimTypes.NameIdentifier, user.IdUser),
                 new Claim(ClaimTypes.Name, user.Username),
-                new Claim(ClaimTypes.Email, user.Email),
-                new Claim("firstName", user.FirstName),
-                new Claim("lastName", user.LastName),
-                new Claim("theme", user.Preferences.Theme),
-                new Claim("notifications", user.Preferences.Notifications.ToString()),
-                new Claim("language", user.Preferences.Language)
+                new Claim(ClaimTypes.Email, user.Email)
             };
 
             var tokenDescriptor = new SecurityTokenDescriptor
