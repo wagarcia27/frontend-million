@@ -33,7 +33,7 @@ export default function PropertyTraceModal({ propertyId, propertyName, isOpen, o
     setLoading(true);
     setError(null);
     try {
-      const response = await fetch(`http://localhost:5000/api/propertyTrace/property/${propertyId}`);
+      const response = await fetch(`https://property-api-k9aq.onrender.com/api/propertyTrace/property/${propertyId}`);
       if (!response.ok) {
         throw new Error('Failed to fetch traces');
       }
