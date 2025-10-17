@@ -1,7 +1,8 @@
 // MongoDB Atlas Seed Data Script
-// Run this script using: mongosh "mongodb+srv://williamgarcia27wg_db_user:FMpj5c8BSOgQA4hW@million-cluster.mwokgyb.mongodb.net/PropertyDb?retryWrites=true&w=majority&appName=Million-cluster" < seed-atlas-data.js
+// Run this script using: mongosh "mongodb+srv://williamgarcia27wg_db_user:FMpj5c8BSOgQA4hW@million-cluster.mwokgyb.mongodb.net/PropertyDb?retryWrites=true&w=majority&appName=Million-cluster" --file seed-atlas-data.js
 
-use PropertyDb;
+// Switch to PropertyDb database
+db = db.getSiblingDB('PropertyDb');
 
 // Clear existing data
 db.Owners.deleteMany({});
